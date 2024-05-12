@@ -1,43 +1,55 @@
 // configure environment - DO NOT MODIFY
-require('dotenv').config();
+require("dotenv").config();
 
 // Import package
-
+const jwt = require("jsonwebtoken");
 // Your code here
-
+require("crypto").randomBytes(64).toString("hex");
 // Define variables - DO NOT MODIFY
 
 // 1. Sign (create) a JWT containing your email address
 let token; // DO NOT MODIFY! Re-assign the token variable below.
 
 // Your code here
-
+token = jwt.sign(
+  { email: "alifaisalawada000@gmail.com" },
+  process.env.SECRET_KEY,
+  { expiresIn: "1s" }
+);
 // See the JWT in the console - DO NOT MODIFY
-console.log('JWT:', token);
+console.log("JWT:", token);
 
 // 2. Decode a JWT Payload
 
 let payload; // DO NOT MODIFY! Re-assign the payload variable below.
 
 // Your code here
+payload = jwt.decode(token);
 
 // See the decoded payload in the console - DO NOT MODIFY
-console.log('Payload:', payload);
+console.log("Payload:", payload);
 
 // 3. Verify a JWT
 
 let verifiedPayload; // DO NOT MODIFY! Re-assign the verifiedPayload variable below.
 
 // Your code here
+verifiedPayload = jwt.verify(token, process.env.SECRET_KEY);
 
 // See the verified payload in the console - DO NOT MODIFY
-console.log('Verified Payload:', verifiedPayload);
+console.log("Verified Payload:", verifiedPayload);
 
 // (Optional) Bonus: Catch Error With Invalid Signature
 // Generate an alternate secret key and use it
 //    To "try" to get the payload using jwt.verify
 //    Then "catch" the error and log it to the console.
-
+try {
+  let unverifiedPayload = jwt.verify(token, process.env.WRONG_SECRET_KEY);
+  console.log(unverifiedPayload);
+} catch (e) {
+  console.log(e.name);
+  console.log("dude why you using the wrong key here, you fr? ");
+}
 // Your code here
 
 // (Optional) Bonus: Catch Error With Expired Token
@@ -47,3 +59,11 @@ console.log('Verified Payload:', verifiedPayload);
 //    Then "catch" the error and log it to the console
 
 // Your code here
+setTimeout(() => {
+  try {
+    let timedOutKey = jwt.verify(token, process.env.SECRET_KEY);
+  } catch (e) {
+    console.log(e.name);
+    console.log("dude the key literally expired a second ago ");
+  }
+}, 2000);
